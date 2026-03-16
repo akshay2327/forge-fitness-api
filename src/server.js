@@ -23,8 +23,18 @@ const app = express()
 connectDB()
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'http://localhost:3000',
+  'https://forge-fitness-prod.vercel.app',
+  'https://frontend-green-xi-35.vercel.app',
+]
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.some(o => origin.startsWith(o.replace('*','')))) return cb(null, true)
+    if (origin.endsWith('.vercel.app')) return cb(null, true)
+    cb(new Error('Not allowed by CORS'))
+  },
   credentials: true,
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization'],
