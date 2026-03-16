@@ -1,0 +1,8 @@
+[phases.install]
+cmds = ["npm install --omit=dev --legacy-peer-deps"]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "node src/server.js"
